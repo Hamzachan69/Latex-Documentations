@@ -1,0 +1,571 @@
+\documentclass{article}
+
+% PACKAGES
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{sectsty}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{qrcode}
+
+% DOCUMENT SETUP
+\geometry{a4paper, margin=1in}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+\definecolor{lightyellow}{HTML}{ffffb9}
+\sethlcolor{lightyellow}
+\sectionfont{\fontsize{14}{15}\selectfont}
+\subsectionfont{\fontsize{12}{15}\selectfont}
+
+% TITLE
+\title{\textbf{Lucid VR Gloves ProtoType 4}}
+\author{LucidVR Project}
+\date{\today}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{1in}
+    
+    {\Huge \bfseries Lucid VR Gloves ProtoType 4\par}
+    
+    \vspace{0.5cm}
+    
+    {\Large \itshape A Comprehensive Guide to Construction, Assembly, and Calibration\par}
+     \\\\{\Large \itshape \textbf{First Draft}\par}
+    \vfill
+    
+    {\large LucidVR Project\par}
+    
+    \vspace{0.8cm}
+    
+    {\large \today\par}
+    
+\end{titlepage}
+
+\section{Project Overview and Principles of Operation}
+\subsection{Introduction}
+The LucidVR project represents a significant and influential initiative within the open-source hardware community, dedicated to \hl{making immersive virtual reality (VR) technologies, specifically haptic feedback, accessible to a broader audience of enthusiasts and developers.} The project's primary objective is to lower the financial and technical barriers to entry for high-fidelity VR peripherals. This is achieved through clever engineering and the use of readily available, low-cost components.
+
+This guide focuses on the construction of the LucidGloves Prototype 4. This iteration marks a pivotal stage in the project's evolution, integrating not only precise finger position tracking but also active force feedback. This combination allows users to not only interact with virtual objects but to physically \textit{feel} their presence, shape, and resistance. The successful completion of this project provides a pair of haptic gloves compatible with PCVR headsets via the SteamVR ecosystem, with documented support for popular titles such as \textit{Half-Life: Alyx} and \textit{Boneworks} through community-developed mods.
+
+\subsection{Principles of Operation}
+The functionality of the LucidGloves Prototype 4 is predicated on two core electromechanical systems: a novel method for finger tracking and a direct-drive mechanism for force feedback. The design philosophy behind these systems prioritizes cost-effectiveness and ingenuity, deliberately avoiding expensive, proprietary components in favor of commodity hardware.
+
+\subsubsection{Finger Position Tracking}
+Traditional high-end VR gloves often rely on flex sensors to measure the bend of each finger joint. While effective, these sensors are prohibitively expensive for budget-oriented projects, with individual sensors costing upwards of \$10 each, leading to a potential cost of \$100 or more for the sensors alone on a pair of gloves. The LucidGloves project circumvents this expense with an innovative mechanical solution.
+
+Each finger's flexion is tracked using a length of low-stretch string, such as braided fishing line. One end of the string is attached to the fingertip, while the other is wound around a 3D-printed spool. This spool is directly coupled to the shaft of a standard 10k $\Omega$ linear taper potentiometer. As the user's finger bends, the string is pulled, causing the spool and the attached potentiometer to rotate. This rotation changes the potentiometer's electrical resistance. A spring, ingeniously harvested from a common retractable badge reel, is integrated into the spool mechanism to provide constant tension, ensuring the string retracts smoothly as the finger straightens.
+
+The microcontroller board reads the varying voltage from the potentiometer's wiper pin through an analog-to-digital converter (ADC), translating the raw analog signal into a precise digital value that represents the finger's current position. This method provides reliable and high-resolution finger tracking at a fraction of the cost of flex sensor-based systems.
+
+\subsubsection{Force Feedback Haptics}
+The defining feature of Prototype 4 is the addition of haptic force feedback, which simulates the sensation of touching and gripping solid objects in the virtual environment. This is accomplished through the integration of one SG90 9g micro servo motor for each finger. These servos are small, inexpensive, and widely used in the radio-controlled hobbyist community.
+
+The servo motor is mounted in line with the finger tracking spool. When a user interacts with a virtual object—for example, closing their hand around a virtual cube—the game's physics engine communicates this event to the glove's microcontroller via the OpenGloves software driver. The firmware then sends a pulse-width modulation (PWM) signal to the corresponding servo, commanding it to rotate to a specific position. This rotation applies torque to the spool, which in turn tensions the finger string. This tension actively resists the user's finger from closing further, creating a tangible sensation of holding a solid object. The system can modulate this force, allowing for the potential to simulate objects of varying solidity and shape.
+
+\subsection{System Architecture}
+The operation of the LucidGloves involves a continuous, bidirectional flow of data between the physical hardware, the driver software, and the VR application. Understanding this architecture provides a crucial conceptual framework for the assembly and troubleshooting process. The data flow can be summarized as follows:
+\begin{enumerate}
+    \item \textbf{Input (User Action):} The user flexes a finger.
+    \item \textbf{Mechanical Transduction:} The string attached to the finger unwinds from the spool, rotating the potentiometer.
+    \item \textbf{Analog-to-Digital Conversion:} The ESP32 microcontroller reads the change in voltage from the potentiometer.
+    \item \textbf{Data Transmission:} The ESP32 processes the raw data from all five potentiometers and transmits it, typically via a USB serial connection, to the host computer.
+    \item \textbf{Driver Interpretation:} The OpenGloves driver, running on the PC, receives the serial data. It interprets these values as finger joint angles and translates them into a format that SteamVR can understand and use for hand tracking in any compatible VR game.
+    \item \textbf{Output (Haptic Event):} Within the VR application, the user's virtual hand makes contact with an object. The game engine detects this collision.
+    \item \textbf{Haptic Signal Generation:} Through a native integration or a mod, the game sends a haptic signal (e.g., "Index finger is blocked at 75\% curl") back to the OpenGloves driver.
+    \item \textbf{Command Transmission:} OpenGloves translates this haptic event into a specific command for the servo motor and sends it back to the ESP32 via the same serial connection.
+    \item \textbf{Actuation:} The ESP32 firmware receives the command and generates the appropriate PWM signal to drive the servo motor to the specified position, creating physical resistance on the user's finger.
+\end{enumerate}
+This entire loop occurs in milliseconds, creating a seamless and responsive haptic experience. The project's design is a testament to resourceful engineering; by combining common components like potentiometers, badge reel springs, and RC servos, it replicates the core functionality of systems costing thousands of dollars for a material cost of approximately \$20 to \$30 per hand. This philosophy of "ingenious frugality" is the cornerstone of the project's success and widespread adoption within the DIY VR community.
+
+\newpage
+\section{Comprehensive Bill of Materials (BOM)}
+The official parts list for Prototype 4 on the project's GitHub Wiki is currently inaccessible. The following Bill of Materials has been meticulously compiled and verified by cross-referencing information from the project's primary GitHub repository, official instructional videos, and detailed build logs from the community.
+
+It is important to recognize that the total project cost is highly dependent on sourcing strategies. The component prices listed below represent budget-oriented estimates, typically achievable through online marketplaces (e.g., AliExpress, eBay) or by purchasing components in multi-packs. Sourcing from local electronics suppliers or opting for expedited shipping will likely increase costs. One community member reported a total cost of \$248.75, but this figure included many tools and consumables that a typical hobbyist may already possess, such as a 3D printer and soldering iron. The project's creator estimates a more realistic cost of around \$23 per hand, which aligns with the budget pricing outlined here.
+
+Furthermore, a key decision that impacts both cost and build complexity relates to wiring. Purchasing a dedicated crimping tool and connector kits offers maximum flexibility and can result in a more robust and professional finish, but it adds a significant upfront tool cost. Alternatively, using pre-crimped wires or soldering connections directly can reduce costs but may be less serviceable. This BOM assumes the user will opt for connector kits for a high-quality build.
+
+\subsection{Electronic Components}
+\begin{longtable}{|p{3cm}|p{1.5cm}|p{5cm}|p{2cm}|p{2cm}|}
+\caption{Master Bill of Materials (Quantities for 2 Gloves)} \label{tab:bom_electronics} \\
+\hline
+\textbf{Component} & \textbf{Quantity} & \textbf{Specification} & \textbf{Est. Budget Price (Unit)} & \textbf{Est. Total Price} \\
+\hline
+\endfirsthead
+\multicolumn{5}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\hline
+\textbf{Component} & \textbf{Quantity} & \textbf{Specification} & \textbf{Est. Budget Price (Unit)} & \textbf{Est. Total Price} \\
+\hline
+\endhead
+\hline \multicolumn{5}{r}{{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+ESP32 Dev Board & 2 & ESP-WROOM-32 based; CP210x USB chip recommended & \$6.00 & \$12.00 \\
+\hline
+10k Ohm Potentiometer & 10 & Linear Taper (B10K), "Green" or "WL" type & \$0.50 & \$5.00 \\
+\hline
+SG90 9g Micro Servo & 10 & Standard 9-gram servo motor with $\sim$180° rotation & \$2.00 & \$20.00 \\
+\hline
+USB Power Bank & 2 & 5V output, minimum 5000mAh capacity & \$15.00 & \$30.00 \\
+\hline
+Joystick Module (Optional) & 2 & 2-axis analog joystick module (e.g., KY-023) & \$1.50 & \$3.00 \\
+\hline
+\end{longtable}
+
+\subsection{Mechanical \& Hardware Components}
+\begin{longtable}{|p{3cm}|p{1.5cm}|p{5cm}|p{2cm}|p{2cm}|}
+\hline
+\textbf{Component} & \textbf{Quantity} & \textbf{Specification} & \textbf{Est. Budget Price (Unit)} & \textbf{Est. Total Price} \\
+\hline
+\endfirsthead
+\multicolumn{5}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\hline
+\textbf{Component} & \textbf{Quantity} & \textbf{Specification} & \textbf{Est. Budget Price (Unit)} & \textbf{Est. Total Price} \\
+\hline
+\endhead
+\hline \multicolumn{5}{r}{{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+Retractable Badge Reels & 10 & Standard belt-clip style (only the internal spring is used) & \$1.00 & \$10.00 \\
+\hline
+Gloves & 1 Pair & Snug-fitting fabric (e.g., mechanic's gloves) & \$12.00 & \$12.00 \\
+\hline
+Velcro Strap & 1 Roll & Hook and loop tape, $\sim$1 inch width & \$8.00 & \$8.00 \\
+\hline
+Fishing Line & 1 Spool & Braided, low-stretch, $\sim$10-20 lb test & \$5.00 & \$5.00 \\
+\hline
+\end{longtable}
+
+\subsection{Wiring \& Connectors}
+\begin{longtable}{|p{3cm}|p{1.5cm}|p{5cm}|p{2cm}|p{2cm}|}
+\hline
+\textbf{Component} & \textbf{Quantity} & \textbf{Specification} & \textbf{Est. Budget Price (Unit)} & \textbf{Est. Total Price} \\
+\hline
+\endfirsthead
+\multicolumn{5}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\hline
+\textbf{Component} & \textbf{Quantity} & \textbf{Specification} & \textbf{Est. Budget Price (Unit)} & \textbf{Est. Total Price} \\
+\hline
+\endhead
+\hline \multicolumn{5}{r}{{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+26AWG Stranded Wire & $\sim$50 ft & Silicone-insulated recommended for flexibility & \$10.00 & \$10.00 \\
+\hline
+JST-XH Connector Kit & 1 & Assortment of 2.54mm pitch 2/3-pin housings and crimps & \$15.00 & \$15.00 \\
+\hline
+Dupont Connector Kit & 1 & Assortment of 2.54mm pitch male/female pins and housings & \$15.00 & \$15.00 \\
+\hline
+\end{longtable}
+
+\subsection{3D Printed Components}
+The following components must be 3D printed. Quantities are listed \textit{per hand} (i.e., for one glove). All STL files are located in the \texttt{hardware} folder of the official LucidGloves GitHub repository. It is critical to select the correct part versions to match the electronic components (potentiometers) and VR system (controller mount) being used.
+
+\begin{longtable}{|p{5cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Component Name} & \textbf{Quantity (per hand)} & \textbf{Notes} \\
+\hline
+\endfirsthead
+\multicolumn{3}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\hline
+\textbf{Component Name} & \textbf{Quantity (per hand)} & \textbf{Notes} \\
+\hline
+\endhead
+\hline \multicolumn{3}{r}{{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+HapticSpool & 5 & \\
+\hline
+Tensioner\_GreenPot OR Tensioner\_WLPot & 5 & Must match the type of 10k potentiometer purchased. \\
+\hline
+SpoolCover & 5 & \\
+\hline
+RigidMount & 1 & Must print the mirrored version for the opposite hand (e.g., RigidMount\_Left). \\
+\hline
+GreenPotSlideHolder OR WLPotSlideHolder & 5 & Must match the Tensioner and potentiometer choice. \\
+\hline
+Quest2\_MountSlider OR Vive3.0\_MountSlider & 1 & Must match the VR controller being used. \\
+\hline
+GuideNode & $\sim$12 & 2-3 per finger, 1-2 for the thumb. \\
+\hline
+EndCap & 5 & May need to be resized to fit the user's fingertips. \\
+\hline
+\end{longtable}
+
+\subsection{Tools \& Consumables}
+This list separates mandatory tools from those that are highly recommended for achieving a higher quality, more reliable, and more serviceable build.
+
+\begin{longtable}{|p{5cm}|p{4cm}|p{6cm}|}
+\hline
+\textbf{Tool / Consumable} & \textbf{Category} & \textbf{Notes} \\
+\hline
+\endfirsthead
+\multicolumn{3}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\hline
+\textbf{Tool / Consumable} & \textbf{Category} & \textbf{Notes} \\
+\hline
+\endhead
+\hline \multicolumn{3}{r}{{Continued on next page}} \\
+\endfoot
+\hline
+\endlastfoot
+3D Printer \& Filament (PLA/PETG) & Mandatory & Essential for fabricating all structural parts. \\
+\hline
+Soldering Iron \& Solder & Mandatory & For all electrical connections. \\
+\hline
+Hot Glue Gun \& Glue Sticks & Mandatory & Primary adhesive for mounting components to the glove. \\
+\hline
+Wire Cutter / Stripper & Mandatory & For preparing all wiring. \\
+\hline
+Screwdriver Set & Mandatory & For any small screws used in assembly. \\
+\hline
+Multimeter & Highly Recommended & For troubleshooting electrical connections and verifying voltages. \\
+\hline
+Micro Connector Pin Crimping Tool & Highly Recommended & For creating reliable JST and Dupont connections. \\
+\hline
+Helping Hands Tool & Highly Recommended & To hold components steady during soldering. \\
+\hline
+Heat Gun \& Heat Shrink Tubing & Highly Recommended & For insulating soldered joints professionally. \\
+\hline
+\end{longtable}
+
+\newpage
+\section{Prerequisite Software and Environment Setup}
+Before beginning any hardware assembly, it is imperative to set up the software development and runtime environment. This ensures that the microcontroller can be programmed and that the completed gloves can communicate with SteamVR. Following these steps in order will prevent common software-related issues later in the build process.
+
+\subsection{Arduino IDE Installation}
+The firmware for the LucidGloves is developed and uploaded using the Arduino Integrated Development Environment (IDE).
+\begin{enumerate}
+    \item Navigate to the official Arduino software page: \url{https://www.arduino.cc/en/software}.
+    \item Download the latest version of the Arduino IDE compatible with the host operating system (Windows, macOS, or Linux).
+    \item Run the installer and follow the on-screen prompts to complete the installation.
+\end{enumerate}
+
+\subsection{ESP32 Board Manager Configuration}
+The standard Arduino IDE does not include support for the ESP32 microcontroller by default. This support must be added manually via the Board Manager.
+\begin{enumerate}
+    \item Launch the Arduino IDE.
+    \item Navigate to \texttt{File > Preferences}.
+    \item In the "Additional Board Manager URLs" field, paste the following exact URL: \url{https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json}.
+    \item Click "OK" to close the Preferences window.
+    \item Navigate to \texttt{Tools > Board > Boards Manager...}.
+    \item In the search bar of the Boards Manager window, type \texttt{esp32}.
+    \item The "esp32 by Espressif Systems" package will appear. Click the "Install" button.
+    \item Once the installation is complete, close the Boards Manager window. The ESP32 boards will now be available in the \texttt{Tools > Board} menu.
+\end{enumerate}
+
+\subsection{Driver Installation}
+Most ESP32 development boards use a CP210x USB-to-UART bridge chip to handle communication with the host computer. The operating system requires a specific driver to recognize this chip and assign a COM port to the device.
+\begin{enumerate}
+    \item Navigate to the Silicon Labs driver download page: \url{https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers}.
+    \item Download and install the appropriate VCP (Virtual COM Port) driver for the operating system.
+    \item After installation, it is advisable to restart the computer. Once the ESP32 is connected, it should now appear as a COM port in the Windows Device Manager or its equivalent in macOS/Linux.
+\end{enumerate}
+
+\subsection{SteamVR and OpenGloves Driver Setup}
+The OpenGloves driver is the critical software layer that allows the custom hardware to be recognized as a native SteamVR input device.
+\begin{enumerate}
+    \item Ensure Steam is installed on the computer. From the Steam client, install SteamVR.
+    \item Navigate to the OpenGloves store page on Steam: \url{https://store.steampowered.com/app/1574050/OpenGloves/}.
+    \item Install the OpenGloves application.
+    \item Launch SteamVR at least once to ensure it is functioning correctly and that OpenGloves is loaded as an add-on. The OpenGloves settings and calibration utility can be accessed from the SteamVR dashboard.
+\end{enumerate}
+
+\newpage
+\section{Part I - Component Fabrication and Preparation}
+This section covers the initial steps of preparing the individual components required for the main assembly. Careful work here will streamline the subsequent, more complex assembly stages.
+
+\subsection{3D Printing Guidelines}
+All structural components of the LucidGloves are 3D printed. Access the latest STL files from the \texttt{hardware} folder within the main project repository on GitHub.
+\begin{description}
+    \item[Part Selection:] Before printing, double-check that the correct versions of the following parts have been selected:
+    \begin{itemize}
+        \item \textbf{Tensioner and PotHolder:} Must match the physical footprint of the 10k potentiometers purchased.
+        \item \textbf{RigidMount:} Print one standard and one mirrored version for the left and right hands.
+        \item \textbf{ControllerSlider:} Print the version that matches the VR controllers (e.g., Quest 2, Vive Wand).
+    \end{itemize}
+    \item[Recommended Print Settings:] For optimal strength and functionality, the following settings are recommended based on community experience:
+    \begin{itemize}
+        \item \textbf{Material:} PLA or PETG. PETG offers slightly better durability and temperature resistance, but PLA is easier to print and sufficient for most use cases.
+        \item \textbf{Layer Height:} 0.18 mm to 0.20 mm. This range provides a good balance between print speed and detail.
+        \item \textbf{Infill:} 20\% to 50\%. A higher infill percentage will result in stronger, more rigid parts. An infill of around 30\% is a good starting point.
+        \item \textbf{Supports:} Most parts are designed to print without supports, but review each model in the slicer software to confirm.
+    \end{itemize}
+\end{description}
+
+\subsection{Badge Reel Disassembly}
+The spring-loaded retraction mechanism for the finger tracking spools is sourced from inexpensive retractable badge reels. This is a core element of the project's budget-conscious design. The goal is to carefully extract the internal rotary spring.
+\begin{enumerate}
+    \item Using a small flathead screwdriver or pry tool, carefully separate the two halves of the badge reel's plastic casing. They are often snap-fit or lightly glued together.
+    \item Once open, the internal mechanism will be visible. This typically consists of a central post, the coiled rotary spring, and the spool for the badge reel's cord.
+    \item Carefully lift the spring out of the casing. Be mindful that it is under slight tension and may uncoil if not handled carefully.
+    \item The spring is the only component needed; the rest of the badge reel can be discarded.
+    \item Repeat this process for all ten badge reels.
+\end{enumerate}
+
+\subsection{Potentiometer and Servo Preparation}
+Preparing the electronic components before they are installed into the tight 3D-printed enclosures will make the final wiring process significantly easier.
+\begin{description}
+    \item[Potentiometers:] The three terminals on each potentiometer should be "pre-tinned." Apply a small amount of solder to each terminal using a soldering iron. This will allow for quick and strong connections when attaching the wires later.
+    \item[Servo Motors:] The standard connector on SG90 servos is a 3-pin Dupont-style header. It is highly recommended to create extension wires for these. Solder three wires (e.g., red for 5V, black for GND, yellow for signal) to a 3-pin JST-XH male connector. The other ends of these wires will be soldered to the ESP32. This creates a modular connection point, allowing a servo to be easily disconnected from the main board if it needs to be replaced.
+\end{description}
+
+\newpage
+\section{Part II - Haptic Module Assembly}
+Each of the five fingers on a glove requires a self-contained haptic module. This section details the assembly of a single module. This process must be repeated five times for each hand. It is recommended to follow along with the official Prototype 4 build video for visual reference during this stage.
+
+\subsection{Potentiometer and Spring Installation}
+This step integrates the tracking sensor and the retraction spring into the main tensioner body.
+\begin{enumerate}
+    \item Take one of the 3D-printed \texttt{Tensioner} parts (e.g., \texttt{Tensioner\_GreenPot}).
+    \item Press one of the 10k potentiometers into the designated hexagonal or keyed slot on the tensioner. Ensure it is fully seated and the shaft protrudes through the central hole.
+    \item Carefully place one of the extracted badge reel springs into the circular recess around the potentiometer's base.
+    \item The inner hook of the spring should be oriented to catch a corresponding feature on the \texttt{HapticSpool} part, while the outer end of the spring should be secured in a small slot within the \texttt{Tensioner} body. This pre-loads the spring.
+\end{enumerate}
+
+\subsection{Spool and Servo Integration}
+This step combines the finger string spool with the force feedback motor.
+\begin{enumerate}
+    \item Take a 3D-printed \texttt{HapticSpool} and one of the plastic servo horns that came with the SG90 servo. Attach the horn to the base of the spool, often with a small screw.
+    \item Press the SG90 servo motor into its rectangular housing on the \texttt{Tensioner} body. The output shaft of the servo should align with the central axis of the potentiometer.
+    \item Take a length of fishing line (approximately 12-18 inches) and tie one end securely to the \texttt{HapticSpool}.
+    \item Mount the \texttt{HapticSpool} onto the servo's output shaft. As the spool is pressed on, ensure the inner hook of the badge reel spring engages with the spool. This will create the retraction force.
+    \item Wind the fishing line around the spool a few times. Route the free end of the line through the designated channel and out of the \texttt{Tensioner} body.
+\end{enumerate}
+
+\subsection{Final Module Closure}
+The final step is to enclose the mechanism.
+\begin{enumerate}
+    \item Take a 3D-printed \texttt{SpoolCover} part.
+    \item Place the cover over the assembled mechanism on the \texttt{Tensioner} body. It should snap into place or be secured with small screws, depending on the specific version of the 3D models.
+    \item The assembly of one haptic module is now complete. Repeat the steps in Section 5 for the remaining four modules for one hand.
+\end{enumerate}
+
+\newpage
+\section{Part III - Glove Integration and Final Mechanical Assembly}
+With all five haptic modules for one hand assembled, they can now be integrated into the main glove structure and attached to the fabric glove itself.
+
+\subsection{Main Assembly Mounting}
+The \texttt{RigidMount} part serves as the backbone of the glove, holding all five haptic modules in a fixed, ergonomic position on the back of the hand.
+\begin{enumerate}
+    \item Take the appropriate \texttt{RigidMount} part (e.g., \texttt{RigidMount\_Left}).
+    \item Slide each of the five completed haptic modules into the corresponding slots on the \texttt{RigidMount}. They are designed for a friction fit but may be secured with a small amount of hot glue for extra rigidity.
+    \item Arrange them in an order that corresponds to the thumb and four fingers.
+\end{enumerate}
+
+\subsection{Controller Mount Attachment}
+This step adds the hardware necessary to attach a standard VR controller or tracker to the glove assembly.
+\begin{enumerate}
+    \item Take the appropriate controller mount slider (e.g., \texttt{Quest2\_MountSlider}).
+    \item Slide this part onto the corresponding rail on the \texttt{RigidMount}. This allows the controller's position to be adjusted for comfort.
+    \item The VR controller itself is typically secured to the slider using Velcro straps or custom 3D-printed clips.
+\end{enumerate}
+
+\subsection{Glove Adhesion}
+The entire rigid assembly is now ready to be mounted to the glove.
+\begin{enumerate}
+    \item Put on the fabric glove to ensure proper positioning. Place the \texttt{RigidMount} assembly on the back of the hand, ensuring it does not impede wrist movement and that the haptic modules are aligned reasonably well with the base of each finger.
+    \item Use a marker to outline the position of the \texttt{RigidMount} on the glove.
+    \item Remove the glove and apply a generous amount of hot glue to the underside of the \texttt{RigidMount} assembly.
+    \item Carefully press the assembly onto the marked position on the glove and hold it firmly until the glue cools and sets.
+\end{enumerate}
+
+\subsection{String Guide and End Cap Placement}
+Proper routing of the finger strings is absolutely critical for accurate tracking and smooth force feedback. The placement of the \texttt{GuideNode} parts defines the path of the strings and directly impacts the system's resolution and mechanical advantage.
+\begin{enumerate}
+    \item Put the glove on again.
+    \item For each finger, take two or three \texttt{GuideNode} parts. These small, eyelet-like parts will be glued along the top of each finger segment. The goal is to create a smooth, low-friction path for the string from the haptic module to the fingertip. The placement should follow the natural curve of the finger as it bends.
+    \item Use hot glue to affix the \texttt{GuideNode} parts in their determined positions.
+    \item Take a 3D-printed \texttt{EndCap} and attach it to the very tip of the finger (often over the fingernail). This can be done with hot glue. The \texttt{EndCap} serves as the anchor point for the string.
+    \item Route the fishing line from each haptic module through its corresponding series of \texttt{GuideNode} parts.
+    \item With the finger held straight, pull the string taut (but not tight enough to move the potentiometer) and tie it securely to the \texttt{EndCap}. Trim any excess line.
+    \item Repeat for all five fingers.
+\end{enumerate}
+
+\newpage
+\section{Part IV - System Wiring and Electronics Integration}
+This section provides a definitive guide for wiring the electronic components to the ESP32 microcontroller. To minimize ambiguity and reduce the risk of errors, a pinout table is used as the primary reference. A systematic, wire-by-wire approach is recommended. The choice of specific General Purpose Input/Output (GPIO) pins on the ESP32 can be flexible, but the pins listed below are known to be safe for this application and correspond to the default firmware configuration. It is crucial that the final wiring exactly matches the pin definitions set in the firmware file.
+
+\begin{table}[h!]
+\centering
+\caption{ESP32 Wiring Pinout}
+\begin{tabular}{|p{4cm}|p{3cm}|p{3cm}|p{4cm}|}
+\hline
+\textbf{Component} & \textbf{Connection Type} & \textbf{Recommended ESP32 Pin} & \textbf{Notes} \\
+\hline
+Thumb Potentiometer & Signal & GPIO 32 & Analog input capable \\
+\hline
+Index Potentiometer & Signal & GPIO 33 & Analog input capable \\
+\hline
+Middle Potentiometer & Signal & GPIO 34 & Analog input capable (Input only) \\
+\hline
+Ring Potentiometer & Signal & GPIO 35 & Analog input capable (Input only) \\
+\hline
+Pinky Potentiometer & Signal & GPIO 36 (VP) & Analog input capable \\
+\hline
+Thumb Servo & Signal & GPIO 25 & PWM capable \\
+\hline
+Index Servo & Signal & GPIO 26 & PWM capable \\
+\hline
+Middle Servo & Signal & GPIO 27 & PWM capable \\
+\hline
+Ring Servo & Signal & GPIO 14 & PWM capable \\
+\hline
+Pinky Servo & Signal & GPIO 12 & PWM capable \\
+\hline
+All Potentiometers & Power (VCC) & 3V3 & Connect all 5 VCC lines to this pin. \\
+\hline
+All Potentiometers & Ground (GND) & GND & Connect all 5 GND lines to this pin. \\
+\hline
+All Servos & Power (VCC) & VIN & \textbf{CRITICAL:} Connect to 5V from USB Power Bank. \\
+\hline
+All Servos & Ground (GND) & GND & Connect to common ground with ESP32. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Power Distribution}
+A critical aspect of the wiring is power distribution. The SG90 servo motors can draw a significant amount of current, especially when all five are active simultaneously. The 3.3V regulator on the ESP32 development board is \textit{not} capable of supplying this much current. Attempting to power the servos from the 3.3V pin will lead to system instability, brownouts, and random resets of the microcontroller.
+
+Therefore, the servos \textbf{must} be powered directly from the 5V source. The most direct way to achieve this is to connect the 5V output of the external USB power bank to the VIN pin on the ESP32 board. The VIN pin is typically connected to the input of the board's voltage regulator, but it also serves as a convenient 5V power rail when the board is powered via USB. The VCC lines of all five servos should be connected to this VIN pin. The ground lines of the servos must be connected to a GND pin on the ESP32 to ensure a common ground for the entire circuit.
+
+\subsection{Wiring Best Practices}
+A clean and organized wiring harness is essential for the longevity and serviceability of the gloves.
+\begin{description}
+    \item[Modularity:] Use JST-XH and Dupont connectors as planned in the BOM. This allows the main ESP32 enclosure, the servos, and the potentiometers to be disconnected from each other, which is invaluable for troubleshooting and repairs.
+    \item[Insulation:] All soldered connections must be insulated to prevent short circuits. Heat shrink tubing provides a durable and professional finish. Apply heat with a heat gun to shrink the tubing snugly over the solder joint.
+    \item[Cable Management:] Bundle wires together using small zip ties, braided sleeving, or electrical tape. Route the wiring harness neatly along the \texttt{RigidMount} and secure it with dabs of hot glue to prevent wires from snagging during use. An enclosure for the ESP32 and its connections should be 3D printed or otherwise fabricated to protect the main board.
+\end{description}
+
+\newpage
+\section{Part V - Firmware Installation and Configuration}
+With the hardware fully assembled and wired, the final step is to upload the firmware to the ESP32 microcontroller. The firmware is the software that runs on the device, responsible for reading the sensors, controlling the motors, and communicating with the PC.
+
+\subsection{Acquiring the Firmware}
+The official firmware is maintained on the LucidVR GitHub.
+\begin{enumerate}
+    \item Navigate to the main LucidGloves repository: \url{https://github.com/LucidVR/lucidgloves}.
+    \item Click the "Code" button and select "Download ZIP".
+    \item Extract the contents of the ZIP file to a known location on the computer.
+\end{enumerate}
+
+\subsection{Configuring the .ino File}
+The firmware is configured by editing definitions in the main source file before compilation. This step ensures the software knows which physical pins the hardware is connected to.
+\begin{enumerate}
+    \item Navigate to the extracted folder and open the \texttt{firmware/lucidgloves-firmware} directory.
+    \item Open the \texttt{lucidgloves-firmware.ino} file using the Arduino IDE.
+    \item Scroll through the file to the configuration section, typically near the top. This section will contain a series of \texttt{\#define} statements for the pin assignments.
+    \item Carefully check that the pin numbers defined in the firmware for each potentiometer and servo (\texttt{\#define PIN\_POT\_THUMB}, \texttt{\#define PIN\_SERVO\_THUMB}, etc.) exactly match the pins used in the wiring as specified in Table 2. If any deviations were made during wiring, they must be corrected here.
+    \item Review other configuration options, such as the communication method. By default, the firmware is configured for USB Serial communication. If Bluetooth connectivity is desired, the relevant lines must be uncommented according to the instructions in the firmware file's comments.
+\end{enumerate}
+
+\subsection{Compiling and Uploading}
+Once the configuration is verified, the firmware can be compiled and uploaded to the ESP32.
+\begin{enumerate}
+    \item Connect the assembled glove's ESP32 to the computer using a USB data cable.
+    \item In the Arduino IDE, navigate to \texttt{Tools > Board} and select "ESP32 Dev Module" from the list of ESP32 boards.
+    \item Navigate to \texttt{Tools > Port} and select the COM port that corresponds to the ESP32. If the port is not visible, verify that the CP210x drivers were installed correctly.
+    \item Click the "Upload" button (the right-facing arrow icon) in the Arduino IDE toolbar. The IDE will compile the code and then attempt to upload it to the board.
+    \item If the upload fails with a connection error, unplug the USB cable, press and hold the "BOOT" button on the ESP32 board, plug the USB cable back in, and then click "Upload" again. The "BOOT" button can be released once the upload process begins.
+\end{enumerate}
+
+\newpage
+\section{Part VI - System Calibration and Final Testing}
+The final phase involves calibrating the gloves to the user's specific hand movements and testing the full range of functionality within a VR environment.
+
+\subsection{Initial Power-Up and Verification}
+Before launching SteamVR, it is wise to perform a basic sanity check.
+\begin{enumerate}
+    \item With the glove still connected to the PC via USB, open the Serial Monitor in the Arduino IDE (\texttt{Tools > Serial Monitor}).
+    \item Set the baud rate to 115200.
+    \item The ESP32 should begin printing debug information, including the raw analog values from each of the five potentiometers.
+    \item Flex each finger individually and observe the corresponding values in the Serial Monitor. The numbers should change smoothly as the finger moves. If a finger's value is stuck at 0 or the maximum value, or if it is very jittery, it indicates a potential wiring issue with that potentiometer.
+\end{enumerate}
+
+\subsection{OpenGloves Calibration}
+Calibration is the process of teaching the OpenGloves driver the range of motion for each of the user's fingers.
+\begin{enumerate}
+    \item Launch SteamVR. The LucidGloves should be detected automatically by the OpenGloves driver.
+    \item Open the SteamVR dashboard and navigate to the OpenGloves settings panel.
+    \item Select the calibration tab. The utility will display a model of a hand.
+    \item The calibration process will prompt the user to perform a series of gestures, typically holding the hand fully open and then making a tight fist.
+    \item Follow the on-screen instructions carefully. This allows the driver to map the minimum and maximum sensor values to the 0\% and 100\% curl of the virtual fingers.
+    \item Save the calibration profile. This profile will be loaded automatically in subsequent SteamVR sessions.
+\end{enumerate}
+
+\subsection{Haptic Feedback Testing}
+The ultimate test is to experience the force feedback in a supported VR application.
+\begin{enumerate}
+    \item Launch a compatible game or demo, such as the OpenGloves Unity demo or a game with haptic mods installed like \textit{Half-Life: Alyx}.
+    \item In the virtual environment, attempt to pick up or touch an object.
+    \item As the virtual fingers make contact with the object's surface, the corresponding servo motors on the glove should engage.
+    \item The user should feel a distinct resistance that prevents their real fingers from closing through the virtual object. The strength and responsiveness of this feedback confirm that the entire system is operating correctly.
+\end{enumerate}
+
+\subsection{Basic Troubleshooting}
+If the gloves do not function as expected, consult the following list of common issues and solutions.
+\begin{description}
+    \item[Problem:] Finger tracking is jittery, erratic, or unresponsive for one or more fingers.
+    \item[Solution:] Check the signal, VCC (3V3), and GND wiring for the affected potentiometer. A loose connection is the most common cause. Verify in the Serial Monitor. If the issue persists, the potentiometer itself may be faulty. Recalibrate in OpenGloves.
+    
+    \item[Problem:] The servos are weak, buzz loudly, or the entire glove disconnects and reconnects when they activate.
+    \item[Solution:] This is a classic power delivery issue. Confirm that the servos are being powered from the 5V VIN pin and \textit{not} the 3.3V pin. Ensure the external USB power bank is fully charged and can supply sufficient current (at least 2A is recommended).
+    
+    \item[Problem:] The glove is not detected in SteamVR, or no COM port appears for the device.
+    \item[Solution:] Ensure the CP210x VCP driver is correctly installed. Verify that the USB cable being used is a data-capable cable, not a power-only charging cable. Check that the correct COM port is selected in the OpenGloves settings.
+\end{description}
+
+\newpage
+\section{Conclusion and Community Resources}
+
+\subsection{Project Summary}
+Successful completion of this guide yields a pair of fully functional, custom-built haptic VR gloves. This project not only provides an immersive peripheral for a fraction of the cost of commercial alternatives but also serves as an exceptional educational experience in electronics, 3D printing, and software integration. The LucidGloves Prototype 4 stands as a powerful example of the innovation possible within the open-source hardware community.
+
+\subsection{Engaging with the Community}
+The LucidVR project is a dynamic, community-driven endeavor. The journey does not end with the completion of the build. The community is the most valuable resource for advanced troubleshooting, sharing user-created modifications, and staying informed about the project's future. The creator is constantly innovating, with plans for future prototypes (Prototype 5) that aim to reduce bulk by using Hall effect sensors and add features like finger splay tracking and vibration haptics. To engage with the community and follow the project's development, the following resources are essential:
+\begin{itemize}
+    \item \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://discord.gg/lucidvr}\end{minipage}\begin{minipage}[c]{0.8\textwidth}\textbf{Official Discord Server:} For real-time support, discussion, and sharing builds.\end{minipage}
+    \item \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://github.com/LucidVR/lucidgloves}\end{minipage}\begin{minipage}[c]{0.8\textwidth}\textbf{Project GitHub Organization:} For the latest firmware, hardware files, and to report issues.\end{minipage}
+    \item \textbf{Creator's Social Media:} For development updates and demonstrations:
+    \begin{itemize}
+        \item \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.youtube.com/c/lucas_vrtech}\end{minipage}\begin{minipage}[c]{0.8\textwidth}YouTube\end{minipage}
+        \item \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.tiktok.com/@lucas_vrtech}\end{minipage}\begin{minipage}[c]{0.8\textwidth}TikTok\end{minipage}
+    \end{itemize}
+\end{itemize}
+
+\section*{Works Cited}
+\begin{thebibliography}{9}
+    \bibitem{hackaday} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://hackaday.io/project/178243-lucidgloves-vr-haptic-gloves-on-a-budget/discussion-166560?page=4}\end{minipage}\begin{minipage}[c]{0.8\textwidth}LucidGloves: VR Haptic Gloves on a budget | Hackaday.io\end{minipage}
+    \bibitem{vrweb} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.vrweb.info/making-diy-haptic-gloves-that-let-you-feel-virtual-reality/}\end{minipage}\begin{minipage}[c]{0.8\textwidth}Making DIY Haptic Gloves That Let You Feel Virtual Reality! - VRWeb.info\end{minipage}
+    \bibitem{makezine} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://makezine.com/projects/build-budget-diy-vr-haptic-gloves/}\end{minipage}\begin{minipage}[c]{0.8\textwidth}Build Budget DIY VR Haptic Gloves - Make Magazine\end{minipage}
+    \bibitem{researchgate} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.researchgate.net/publication/363221702_Suitability_Testing_of_the_LucidGloves_Prototype_4_for_Extended_Reality_Medical_Teaching}\end{minipage}\begin{minipage}[c]{0.8\textwidth}Suitability Testing of the LucidGloves Prototype 4 for Extended Reality Medical Teaching\end{minipage}
+    \bibitem{reddit} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.reddit.com/r/functionalprint/comments/vfymcs/lucidgloves_prototype_v41_virtual_reality_gloves/}\end{minipage}\begin{minipage}[c]{0.8\textwidth}LucidGloves prototype V4.1 virtual reality gloves with haptics. These connect to SteamVR via bluetooth, track my fingers and generate force feedback, allowing me to feel virtual objects in games. Its SCIENCE! : r/functionalprint - Reddit\end{minipage}
+    \bibitem{adamkoch} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.adamkoch.com/posts/2022/04/30}\end{minipage}\begin{minipage}[c]{0.8\textwidth}Lucid Gloves - Adam Koch\end{minipage}
+    \bibitem{github} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://github.com/LucidVR/lucidgloves}\end{minipage}\begin{minipage}[c]{0.8\textwidth}LucidVR/lucidgloves: Arduino/ESP32 based DIY VR Haptic ... - GitHub\end{minipage}
+    \bibitem{youtube} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.youtube.com/watch?v=2yF-SJcg3zQ}\end{minipage}\begin{minipage}[c]{0.8\textwidth}How to build cheap VR Haptic Gloves to FEEL VR. - YouTube\end{minipage}
+    \bibitem{thingiverse} \begin{minipage}[c]{0.15\textwidth}\qrcode[height=1.5cm]{https://www.thingiverse.com/thing:4799941}\end{minipage}\begin{minipage}[c]{0.8\textwidth}LucidVR Haptic VR Gloves by ChrisYOLO - Thingiverse\end{minipage}
+\end{thebibliography}
+
+\end{document}
