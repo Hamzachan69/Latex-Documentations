@@ -1,0 +1,112 @@
+\documentclass[12pt]{article}
+
+% PACKAGES
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+% PAGE GEOMETRY
+\geometry{a4paper, margin=1in}
+
+% DOCUMENT INFORMATION
+\title{PPIT Assignment 3 \\ \large A Comparative Analysis of Startup Funding Models}
+\author{Your Name}
+\date{\today}
+
+% HEADER & FOOTER
+\pagestyle{fancy}
+\fancyhf{} % Clear all header and footer fields
+\fancyhead[C]{Startup Funding: Equity, Loan, and Grant}
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{The Fundamental Difference: Equity, Loan, and Grant Funding}
+
+When a company needs capital, the method of acquisition defines its obligations, ownership structure, and growth trajectory. The choice between giving a loan or buying shares (equity) depends on the company's nature and the investor's appetite for risk and reward. This report analyzes the three primary funding types: Equity, Loan, and Grant funding, using Y Combinator companies as case studies.
+
+\bigskip
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|X|X|X|}
+\hline
+\textbf{Feature} & \textbf{Equity Funding} & \textbf{Loan (Debt) Funding} & \textbf{Grant Funding} \\
+\hline \hline
+\textbf{What is it?} & Selling a portion of ownership (shares) in the company in exchange for cash. & Borrowing money that must be paid back, with interest, over a set period. & A non-repayable gift of funds, typically given for a specific purpose. \\
+\hline
+\textbf{Ownership} & Founder gives up a percentage of the company. The investor becomes a part-owner. & Founder retains 100\% ownership. The lender has no say in company decisions. & Founder retains 100\% ownership. The grantor may have oversight on how funds are used. \\
+\hline
+\textbf{Repayment} & No repayment required. The investor makes money only if the company's value increases (e.g., through an IPO or acquisition). & Principal and interest must be repaid on a fixed schedule, regardless of company performance. & No repayment required. The company must meet the grant's requirements and reporting standards. \\
+\hline
+\textbf{Investor's Goal} & High return on investment ($10\times - 1000\times+$). High risk for potentially massive reward. & To receive their principal back plus a predictable return from interest. Prefers low-risk, stable businesses. & To achieve a specific social, scientific, or community impact. The goal is mission-driven, not financial. \\
+\hline
+\textbf{Best For} & High-growth potential startups with scalable business models (e.g., software, biotech). & Businesses with predictable cash flow, physical assets for collateral, or a clear path to revenue. & Non-profits, research institutions, and social enterprises focused on public good. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\section{Y Combinator Case Studies}
+
+\subsection{Equity-Funded: Airbnb (YC W09)}
+
+\paragraph{Company Description}
+Airbnb is an online marketplace that connects people who want to rent out their homes with people who are looking for accommodations. It is a technology platform that takes a commission from each booking.
+
+\paragraph{Why Equity Funding Fits Them Best}
+\begin{itemize}
+    \item \textbf{High-Growth Potential:} Airbnb's model is incredibly scalable. It can expand globally with minimal capital investment compared to a hotel chain, which is exactly what equity investors seek.
+    \item \textbf{High Initial Risk:} In its early days, Airbnb was an unproven idea with no assets. Equity investors were willing to take a bet on the vision in exchange for a large ownership stake.
+    \item \textbf{Network Effects:} The platform requires massive upfront investment in marketing and technology to build momentum, which is best funded by large equity rounds.
+\end{itemize}
+
+\paragraph{Why Other Funding Types Wouldn't Fit}
+\begin{itemize}
+    \item \textbf{Loan:} Early-stage Airbnb had no predictable revenue or physical assets to use as collateral, making it ineligible for a loan.
+    \item \textbf{Grant:} Airbnb is a for-profit company with a goal of generating massive financial returns, not a charitable mission.
+\end{itemize}
+
+\subsection{Loan-Funded: Hadrian (YC S20)}
+
+\paragraph{Company Description}
+Hadrian builds automated factories to produce precision components for the aerospace and defense industries. Their business is built around owning and operating advanced robotics and CNC machines.
+
+\paragraph{Why Loan Funding Fits Them Best}
+\begin{itemize}
+    \item \textbf{Asset-Heavy Model:} Hadrian's primary assets are expensive, physical machines. These assets have tangible value and can be used as \textbf{collateral} to secure large loans.
+    \item \textbf{Predictable Contracts:} Hadrian works on long-term, high-value contracts with major aerospace companies, creating a predictable revenue stream that can comfortably service debt payments.
+    \item \textbf{Avoiding Dilution:} Using asset-backed loans allows them to expand manufacturing capacity without giving up more ownership than necessary.
+\end{itemize}
+
+\paragraph{Why Other Funding Types Wouldn't Fit (for expansion)}
+\begin{itemize}
+    \item \textbf{Equity (Alone):} Relying solely on equity to purchase every piece of machinery would be extremely dilutive to the founders and early investors.
+    \item \textbf{Grant:} Hadrian is a for-profit commercial enterprise operating in the lucrative defense sector and does not qualify for non-profit grants.
+\end{itemize}
+
+\subsection{Grant-Funded: Watsi (YC W13)}
+
+\paragraph{Company Description}
+Watsi is a non-profit global crowdfunding platform that enables donors to directly fund low-cost, high-impact medical care. Watsi's operational costs are funded separately by grants and donations.
+
+\paragraph{Why Grant Funding Fits Them Best}
+\begin{itemize}
+    \item \textbf{Non-Profit Mission:} Watsi's goal is social impact, not financial return. Its success is measured by patients treated, not profit. This aligns perfectly with the objectives of philanthropic foundations.
+    \item \textbf{No Profit Generation:} By design, Watsi does not generate profit from its core service, making it impossible to offer a return to equity investors or make interest payments on a loan.
+    \item \textbf{Accountability and Reporting:} Grant providers require rigorous reporting on impact, which aligns with Watsi's model of transparency.
+\end{itemize}
+
+\paragraph{Why Other Funding Types Wouldn't Fit}
+\begin{itemize}
+    \item \textbf{Equity:} As a 501(c)(3) non-profit, Watsi legally cannot sell ownership stakes and offers no financial upside.
+    \item \textbf{Loan:} Watsi has no revenue stream from which to repay a loan. Taking on debt would divert funds from its core mission.
+\end{itemize}
+
+\end{document}
