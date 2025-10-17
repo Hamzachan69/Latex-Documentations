@@ -13,6 +13,7 @@
 \usepackage{xcolor}
 \usepackage{soul}
 \usepackage{qrcode}
+\usepackage{amsmath}
 
 % DOCUMENT SETUP
 \geometry{a4paper, margin=1in}
@@ -56,33 +57,33 @@
 
 \section{Project Overview and Principles of Operation}
 \subsection{Introduction}
-The LucidVR project represents a significant and influential initiative within the open-source hardware community, dedicated to \hl{making immersive virtual reality (VR) technologies, specifically haptic feedback, accessible to a broader audience of enthusiasts and developers.} The project's primary objective is to lower the financial and technical barriers to entry for high-fidelity VR peripherals. This is achieved through clever engineering and the use of readily available, low-cost components.
+The LucidVR project represents a significant and influential initiative within the open-source hardware community, dedicated to \hl{making \textbf{immersive virtual reality (VR) }technologies, specifically haptic feedback, accessible to a broader audience of enthusiasts and developers.} The project's primary objective is to lower the financial and technical barriers to entry for high-fidelity VR peripherals. This is achieved through clever engineering and the use of readily available, low-cost components.
 
-This guide focuses on the construction of the LucidGloves Prototype 4. This iteration marks a pivotal stage in the project's evolution, integrating not only precise finger position tracking but also active force feedback. This combination allows users to not only interact with virtual objects but to physically \textit{feel} their presence, shape, and resistance. The successful completion of this project provides a pair of haptic gloves compatible with PCVR headsets via the SteamVR ecosystem, with documented support for popular titles such as \textit{Half-Life: Alyx} and \textit{Boneworks} through community-developed mods.
+This guide focuses on the construction of the \textbf{LucidGloves Prototype 4.} This iteration marks a pivotal stage in the project's evolution, integrating not only precise finger position tracking but also active force feedback. This combination allows users to not only interact with virtual objects but to physically \textit{feel} their presence, shape, and resistance. The successful completion of this project provides a pair of haptic gloves compatible with PCVR headsets via the SteamVR ecosystem, with documented support for popular titles such as \lambdaHalf-Life: Alyx  and Boneworks through community-developed mods.
 
 \subsection{Principles of Operation}
-The functionality of the LucidGloves Prototype 4 is predicated on two core electromechanical systems: a novel method for finger tracking and a direct-drive mechanism for force feedback. The design philosophy behind these systems prioritizes cost-effectiveness and ingenuity, deliberately avoiding expensive, proprietary components in favor of commodity hardware.
+The functionality of the \hl{LucidGloves Prototype 4 is predicated on two core electromechanical systems: a novel method for finger tracking and a direct-drive mechanism for force feedback.} The design philosophy behind these systems prioritizes cost-effectiveness and ingenuity, deliberately avoiding expensive, proprietary components in favor of commodity hardware.
 
 \subsubsection{Finger Position Tracking}
-Traditional high-end VR gloves often rely on flex sensors to measure the bend of each finger joint. While effective, these sensors are prohibitively expensive for budget-oriented projects, with individual sensors costing upwards of \$10 each, leading to a potential cost of \$100 or more for the sensors alone on a pair of gloves. The LucidGloves project circumvents this expense with an innovative mechanical solution.
+Traditional high-end \hl{VR gloves often rely on flex sensors to measure the bend of each finger joint. While effective}, these sensors are prohibitively expensive for budget-oriented projects, \hl{with individual sensors costing upwards of \$10 each, leading to a potential cost of \$100 or more for the sensors alone on a pair of gloves.} The LucidGloves project circumvents this expense with an innovative mechanical solution.
 
-Each finger's flexion is tracked using a length of low-stretch string, such as braided fishing line. One end of the string is attached to the fingertip, while the other is wound around a 3D-printed spool. This spool is directly coupled to the shaft of a standard 10k $\Omega$ linear taper potentiometer. As the user's finger bends, the string is pulled, causing the spool and the attached potentiometer to rotate. This rotation changes the potentiometer's electrical resistance. A spring, ingeniously harvested from a common retractable badge reel, is integrated into the spool mechanism to provide constant tension, ensuring the string retracts smoothly as the finger straightens.
+\hl{Each finger's flexion is tracked using a length of low-stretch string, such as braided fishing line. One end of the string is attached to the fingertip, while the other is wound around a 3D-printed spool. This spool is directly coupled to the shaft of a standard 10k $\Omega$ linear taper potentiometer. As the user's finger bends, the string is pulled, causing the spool and the attached potentiometer to rotate. This rotation changes the potentiometer's electrical resistance. A spring, ingeniously harvested from a common retractable badge reel, is integrated into the spool mechanism to provide constant tension, ensuring the string retracts smoothly as the finger straightens.}
 
 The microcontroller board reads the varying voltage from the potentiometer's wiper pin through an analog-to-digital converter (ADC), translating the raw analog signal into a precise digital value that represents the finger's current position. This method provides reliable and high-resolution finger tracking at a fraction of the cost of flex sensor-based systems.
 
 \subsubsection{Force Feedback Haptics}
-The defining feature of Prototype 4 is the addition of haptic force feedback, which simulates the sensation of touching and gripping solid objects in the virtual environment. This is accomplished through the integration of one SG90 9g micro servo motor for each finger. These servos are small, inexpensive, and widely used in the radio-controlled hobbyist community.
+The defining feature of Prototype 4 is the addition of haptic force feedback, which simulates the sensation of touching and gripping solid objects in the virtual environment. \hl{This is accomplished through the integration of one SG90 9g micro servo motor for each finger.} These servos are small, inexpensive, and widely used in the radio-controlled hobbyist community.
 
-The servo motor is mounted in line with the finger tracking spool. When a user interacts with a virtual object—for example, closing their hand around a virtual cube—the game's physics engine communicates this event to the glove's microcontroller via the OpenGloves software driver. The firmware then sends a pulse-width modulation (PWM) signal to the corresponding servo, commanding it to rotate to a specific position. This rotation applies torque to the spool, which in turn tensions the finger string. This tension actively resists the user's finger from closing further, creating a tangible sensation of holding a solid object. The system can modulate this force, allowing for the potential to simulate objects of varying solidity and shape.
+\hl{The servo motor is mounted in line with the finger tracking spool. When a user interacts with a virtual object—for example, closing their hand around a virtual cube—the game's physics engine communicates this event to the glove's microcontroller via the OpenGloves software driver. The firmware then sends a pulse-width modulation (PWM) signal to the corresponding servo, commanding it to rotate to a specific position. This rotation applies torque to the spool, which in turn tensions the finger string.} This tension actively resists the user's finger from closing further, creating a tangible sensation of holding a solid object. The system can modulate this force, allowing for the potential to simulate objects of varying solidity and shape.
 
 \subsection{System Architecture}
 The operation of the LucidGloves involves a continuous, bidirectional flow of data between the physical hardware, the driver software, and the VR application. Understanding this architecture provides a crucial conceptual framework for the assembly and troubleshooting process. The data flow can be summarized as follows:
 \begin{enumerate}
     \item \textbf{Input (User Action):} The user flexes a finger.
     \item \textbf{Mechanical Transduction:} The string attached to the finger unwinds from the spool, rotating the potentiometer.
-    \item \textbf{Analog-to-Digital Conversion:} The ESP32 microcontroller reads the change in voltage from the potentiometer.
-    \item \textbf{Data Transmission:} The ESP32 processes the raw data from all five potentiometers and transmits it, typically via a USB serial connection, to the host computer.
-    \item \textbf{Driver Interpretation:} The OpenGloves driver, running on the PC, receives the serial data. It interprets these values as finger joint angles and translates them into a format that SteamVR can understand and use for hand tracking in any compatible VR game.
+    \item \textbf{Analog-to-Digital Conversion:} The \hl{ESP32 microcontroller} reads the change in voltage from the \hl{potentiometer}.
+    \item \textbf{Data Transmission:} The \hl{ESP32 processes the raw data from all five potentiometers and transmits it, typically via a USB serial connection, to the host computer.}
+    \item \textbf{Driver Interpretation:} The \hl{OpenGloves driver,} running on the PC, receives the serial data. \hl{It interprets these values as finger joint angles and translates them into a format that SteamVR can understand and use for hand tracking in any compatible VR game.}
     \item \textbf{Output (Haptic Event):} Within the VR application, the user's virtual hand makes contact with an object. The game engine detects this collision.
     \item \textbf{Haptic Signal Generation:} Through a native integration or a mod, the game sends a haptic signal (e.g., "Index finger is blocked at 75\% curl") back to the OpenGloves driver.
     \item \textbf{Command Transmission:} OpenGloves translates this haptic event into a specific command for the servo motor and sends it back to the ESP32 via the same serial connection.
@@ -92,9 +93,9 @@ This entire loop occurs in milliseconds, creating a seamless and responsive hapt
 
 \newpage
 \section{Comprehensive Bill of Materials (BOM)}
-The official parts list for Prototype 4 on the project's GitHub Wiki is currently inaccessible. The following Bill of Materials has been meticulously compiled and verified by cross-referencing information from the project's primary GitHub repository, official instructional videos, and detailed build logs from the community.
+\hl{The following Bill of Materials has been meticulously compiled and verified by cross-referencing information from the project's primary GitHub repository, official instructional videos, and detailed build logs from the community.}
 
-It is important to recognize that the total project cost is highly dependent on sourcing strategies. The component prices listed below represent budget-oriented estimates, typically achievable through online marketplaces (e.g., AliExpress, eBay) or by purchasing components in multi-packs. Sourcing from local electronics suppliers or opting for expedited shipping will likely increase costs. One community member reported a total cost of \$248.75, but this figure included many tools and consumables that a typical hobbyist may already possess, such as a 3D printer and soldering iron. The project's creator estimates a more realistic cost of around \$23 per hand, which aligns with the budget pricing outlined here.
+It is important to recognize that the total project cost is highly dependent on sourcing strategies. \hl{The component prices listed below represent budget-oriented estimates, typically achievable through online marketplaces (e.g., AliExpress, eBay) or by purchasing components in multi-packs.} Sourcing from local electronics suppliers or opting for expedited shipping will likely increase costs. One community member reported a \hl{total cost of \$248.75}, but this figure included many tools and consumables that a typical hobbyist may already possess, such as a 3D printer and soldering iron. The project's creator estimates a more realistic cost of around \$23 per hand, which aligns with the budget pricing outlined here.
 
 Furthermore, a key decision that impacts both cost and build complexity relates to wiring. Purchasing a dedicated crimping tool and connector kits offers maximum flexibility and can result in a more robust and professional finish, but it adds a significant upfront tool cost. Alternatively, using pre-crimped wires or soldering connections directly can reduce costs but may be less serviceable. This BOM assumes the user will opt for connector kits for a high-quality build.
 
@@ -256,7 +257,7 @@ Heat Gun \& Heat Shrink Tubing & Highly Recommended & For insulating soldered jo
 Before beginning any hardware assembly, it is imperative to set up the software development and runtime environment. This ensures that the microcontroller can be programmed and that the completed gloves can communicate with SteamVR. Following these steps in order will prevent common software-related issues later in the build process.
 
 \subsection{Arduino IDE Installation}
-The firmware for the LucidGloves is developed and uploaded using the Arduino Integrated Development Environment (IDE).
+\hl{The firmware for the LucidGloves is developed and uploaded using the Arduino Integrated Development Environment (IDE).}
 \begin{enumerate}
     \item Navigate to the official Arduino software page: \url{https://www.arduino.cc/en/software}.
     \item Download the latest version of the Arduino IDE compatible with the host operating system (Windows, macOS, or Linux).
@@ -308,7 +309,7 @@ All structural components of the LucidGloves are 3D printed. Access the latest S
     \end{itemize}
     \item[Recommended Print Settings:] For optimal strength and functionality, the following settings are recommended based on community experience:
     \begin{itemize}
-        \item \textbf{Material:} PLA or PETG. PETG offers slightly better durability and temperature resistance, but PLA is easier to print and sufficient for most use cases.
+        \item \hl{\textbf{Material:} PLA or PETG. PETG offers slightly better durability and temperature resistance, but PLA is easier to print and sufficient for most use cases.}
         \item \textbf{Layer Height:} 0.18 mm to 0.20 mm. This range provides a good balance between print speed and detail.
         \item \textbf{Infill:} 20\% to 50\%. A higher infill percentage will result in stronger, more rigid parts. An infill of around 30\% is a good starting point.
         \item \textbf{Supports:} Most parts are designed to print without supports, but review each model in the slicer software to confirm.
@@ -447,10 +448,10 @@ All Servos & Ground (GND) & GND & Connect to common ground with ESP32. \\
 \end{table}
 
 \subsection{Power Distribution}
-A critical aspect of the wiring is power distribution. The SG90 servo motors can draw a significant amount of current, especially when all five are active simultaneously. The 3.3V regulator on the ESP32 development board is \textit{not} capable of supplying this much current. Attempting to power the servos from the 3.3V pin will lead to system instability, brownouts, and random resets of the microcontroller.
+\hl{A critical aspect of the wiring is power distribution. The SG90 servo motors can draw a significant amount of current, especially when all five are active simultaneously. The 3.3V regulator on the ESP32 development board is \textit{not} capable of supplying this much current. Attempting to power the servos from the 3.3V pin will lead to system instability, brownouts, and random resets of the microcontroller.
 
 Therefore, the servos \textbf{must} be powered directly from the 5V source. The most direct way to achieve this is to connect the 5V output of the external USB power bank to the VIN pin on the ESP32 board. The VIN pin is typically connected to the input of the board's voltage regulator, but it also serves as a convenient 5V power rail when the board is powered via USB. The VCC lines of all five servos should be connected to this VIN pin. The ground lines of the servos must be connected to a GND pin on the ESP32 to ensure a common ground for the entire circuit.
-
+}
 \subsection{Wiring Best Practices}
 A clean and organized wiring harness is essential for the longevity and serviceability of the gloves.
 \begin{description}
