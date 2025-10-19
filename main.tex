@@ -1,0 +1,189 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+%
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generated pdf is machine readable / ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+% <<< UPDATED: added positive vspaces before & after each subheading >>>
+\newcommand{\resumeSubheading}[4]{
+  \vspace{4pt}  % space before heading
+  \item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{2pt}  % space after heading
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Hamza Khan} \\ \vspace{1pt}
+    \small +92-347-8479617$|$ 
+    \href{mailto:muhammadhamzakhanmarwat@gmail.com}{\underline{muhammadhamzakhanmarwat@gmail.com}} $|$ 
+    \href{https://www.linkedin.com/in/muhammad-hamza-khan-4ab661297/}{\underline{linkedin.com/in/muhammad-hamza-khan}} $|$
+    \href{https://github.com/Hamzachan69}{\underline{github.com/Hamzachan69}}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {FAST NUCES}{\textbf{Peshawar}}
+      {Bachelor of Science in Computer Science,}{Aug. 2022 -- June 2026}
+  \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Unity Intern at Mlabs (MindStorms Studios)}{June 2024 -- Aug 2024}
+      {MINDSTORM STUDIOS - Lahore}{}
+      \resumeItemListStart
+        \resumeItem{Built a solid foundation in the Unity game engine—mastering C\# scripting, physics simulation, asset integration, and core gameplay mechanics to bring interactive experiences to life.}
+        \resumeItem{Applied key concepts of game loops, user interaction, and playtesting to refine mechanics and ensure engaging, polished gameplay.}
+        \resumeItem{Partnered with a team of four at the Summer Rookie Game Jam ’24 to conceive, prototype, and deliver a 2D slingshot game—handling level design, physics tuning, and iteration under a tight deadline.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Junior Unity Game Developer at Cognitive Force.}{Nov. 2024 -- Present}
+      {COGNITIVE FORCE - Lahore}{}
+      \resumeItemListStart
+        \resumeItem{Implemented and configured authentication APIs to enable secure user login, registration, and session management.}
+        \resumeItem{Developed and integrated user interface components, improving usability and delivering a more intuitive, visually appealing experience.}
+        \resumeItem{Assisted in core engine tuning and refactoring, reducing resource consumption and boosting overall application performance.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Professional Video Editor}{June 2023 -- Present}
+      {Upwork.com}{}
+      \resumeItemListStart
+        \resumeItem{Edited numerous client videos on AI topics into broadcast‑quality content.}
+        \resumeItem{Utilized transitions, animated captions, color grading, motion graphics, and visual effects to enhance storytelling and engagement.}
+        \resumeItem{Consistently met tight deadlines, delivering on time and fostering high client satisfaction and repeat engagements.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Snake Game} $|$ \emph{C++ , Visual Studio , Canva , SFML , GitHub}}{March 2023 -- April 2023}
+      \resumeItemListStart
+        \resumeItem{Remade the classic Nokia Snake game with a nostalgic aesthetic, smoother controls, and polished visuals.}
+        \resumeItem{Applied OOP principles (encapsulation, inheritance, abstraction) to structure snake, food, and game manager for clean, maintainable code.}
+        \resumeItem{Implemented dynamic gameplay mechanics and custom graphics, optimizing frame updates and collision logic for a responsive, immersive experience.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{2D SlingShot Game} $|$ \emph{C\# , Unity Game Engine , Visual Studio}}{June 2024 -- Aug 2024}
+      \resumeItemListStart
+        \resumeItem{Applied internship learnings to architect and develop core gameplay systems during a time‑boxed Game Jam project.}
+        \resumeItem{Designed and implemented a physics‑based slingshot mechanic for launching projectiles at zombie targets through destructible obstacles.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{\textit{: Python , C / C++ / C\# , SQL} } \\
+     \textbf{Developer Tools}{\textit{: Git , SFML , Oracle SQL Developer , Unity Game Engine}.} \\
+     \textbf{Databases}{:  \textit{Oracle SQL.} }
+    }}
+ \end{itemize}
+
+\end{document}
