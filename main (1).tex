@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+
+% --- PACKAGES ---
+
+% 'geometry' is used to set the page margins.
+% 'margin=1in' gives us 1-inch margins on all sides,
+% which looks clean and uses the page well.
+\usepackage[margin=1in]{geometry}
+
+% 'enumitem' gives us advanced control over lists (like changing font size)
+\usepackage{enumitem}
+
+
+% --- PAGE STYLE ---
+% '\pagestyle{empty}' removes the page number from the bottom of the page.
+\pagestyle{empty}
+
+
+% --- DOCUMENT START ---
+% The 'document' environment is where all your visible content goes.
+% You should only have ONE \begin{document} and ONE \end{document} in your file.
+\begin{document}
+
+% --- 1. THE HEADING ---
+% 'begin{center}' centers everything inside it.
+% '\Huge' makes the text very large.
+% '\textbf' makes the text bold.
+\begin{center}
+    \Huge \textbf{Weekly Tasks}
+\end{center}
+
+% --- 2. THE LINE ---
+% '\rule' creates a horizontal line.
+% '\linewidth' makes the line span the full width of the text.
+% '1.5pt' sets the thickness of the line.
+\rule{\linewidth}{1.5pt}
+
+% --- 3. THE DATE ---
+% '\vspace{5pt}' adds a small amount of vertical space (padding).
+% '\today' is a special command that automatically inserts the current date.
+\vspace{5pt}
+\begin{center}
+    \large \today
+\end{center}
+\vspace{20pt} % Adds a larger space before the list starts
+
+
+% --- 4. THE TASK LIST ---
+%
+% 'begin{itemize}' starts a bulleted list.
+% We removed the font settings from the options here.
+%
+\begin{itemize}
+
+    % NEW METHOD: Set the font size *inside* the list.
+    % This command applies to EVERYTHING that follows in this 'itemize'
+    % environment, including all dots and all text.
+    % I've set it to 50pt, which is very large.
+    \fontsize{20}{20}\selectfont
+
+    % Each task must start with the '\item' command.
+    \item Do two LeetCode/CodeForces Questions and learn a concept\vfill 
+
+    \item 2 Lectures of Unity Course / practice\vfill 
+
+    \item 2 lectures of Source Filmmaker\vfill 
+
+    \item Optional learn CyberSecurity (hacking)\vfill 
+
+    \item learn Web Dev (if it is viable as a side gig) \vfill 
+
+
+\end{itemize}
+
+
+% --- DOCUMENT END ---
+% This must be the very last command in your .tex file.
+\end{document}
+
