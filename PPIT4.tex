@@ -1,0 +1,110 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- UNIVERSAL PREAMBLE BLOCK ---
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+
+% --- PDFLATEX FONT & ENCODING SETUP ---
+% Remove fontspec and modern babel; Use classic pdflatex packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern} % Use Latin Modern fonts
+\renewcommand{\familydefault}{\sfdefault} % Set sans-serif as default font
+
+% --- ADDITIONAL PACKAGES ---
+\usepackage{booktabs} % For professional-looking tables
+\usepackage{enumitem} % For list customization
+\setlist[itemize]{label=\textbullet} % Use standard bullets
+
+% hyperref must be the last package
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Ethical Analysis of Peshawar BRT},
+    pdfauthor={Student Report},
+    pdfsubject={Professional Issues in IT},
+    pdfkeywords={Ethics, BRT, Peshawar, Stakeholder},
+    bookmarks=true,
+    pdfdisplaydoctitle=true
+}
+
+% --- DOCUMENT METADATA ---
+\title{
+    \normalfont\large Hamza Khan (22P-9178) \\
+    \normalfont\large PPIT Assignment 4 \\[2em] % Add vertical space
+    \huge Ethical Decision-Making Analysis: \\ The Peshawar BRT (Zu Peshawar) Project
+}
+\author{Based on the Framework from "Professional Issues in IT"}
+\date{\today}
+
+% --- BEGIN DOCUMENT ---
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent This report applies the four-step ethical decision-making framework, as outlined in the "Professional Issues in IT" course slides, to a real-world case from Pakistan: the Peshawar Bus Rapid Transit (BRT) project. It analyzes the case, identifies the stakeholder network, outlines the core ethical issues, and evaluates the different courses of action based on moral philosophies discussed in the course.
+\end{abstract}
+
+\section{Describe and Analyze a Real Case}
+
+The case selected for analysis is the government's investment in and construction of a Bus Rapid Transit (BRT) service, specifically the Zu Peshawar project.
+
+The facts of the case are as follows: The Khyber Pakhtunkhwa government initiated a large-scale, capital-intensive public works project to create a modern, high-speed transportation system for the public. The stated goal of this project was to serve the "common good of transportation for public," as mentioned in the course slides.
+
+The project, however, involved "huge costs," was financed significantly through international loans (e.g., from the Asian Development Bank), and caused major, prolonged disruption to the city's infrastructure, businesses, and daily life during its construction. This created a significant public and political debate, raising the core question: Given the immense cost and disruption, was this the correct ethical decision?
+
+\section{Identify the Stakeholder Network}
+
+The slides define primary stakeholders as those necessary for survival and secondary stakeholders as those who affect or are affected by the organization. In this public project, the stakeholders are:
+
+\begin{table}[h]
+\centering
+\caption{Stakeholder Network for the Peshawar BRT Project}
+\label{tab:stakeholders}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Stakeholder Type} & \textbf{Individuals / Groups} \\
+\midrule
+\textbf{Primary Stakeholders} & The Government (Investor and Operator) \\
+                            & The Public / Commuters (The "Customers") \\
+                            & Financial Institutions (Investors / Lenders) \\
+                            & Project Employees (Construction and Operations) \\
+\addlinespace
+\textbf{Secondary Stakeholders} & Owners of traditional buses, taxis, etc. (Competitors) \\
+                            & Local Businesses (along the construction route) \\
+                            & General Taxpayers \\
+                            & The Media (reporting on the project) \\
+                            & Political Opposition Groups \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Identify the Ethical Issues}
+
+The primary ethical conflict in this case is a clash between two major moral philosophies presented in the slides.
+
+\begin{itemize}
+    \item \textbf{Common Good Approach vs. Utilitarianism:} The project is a textbook example of the \textbf{Common Good Approach}, which states that an "ethical choice is one that advances the common good (society as whole)". The BRT system was built to serve the entire public. However, a \textbf{Utilitarian} philosophy demands a cost-benefit analysis to determine if the act "results in greatest benefit." This creates the core ethical issue: Do the long-term benefits for the public (cleaner air, faster travel) outweigh the "huge costs" of financial debt and the severe negative impact on other stakeholders?
+
+    \item \textbf{The Fairness Approach:} The project raises significant questions of fairness. A \textbf{Relativist} following the \textbf{Fairness Approach} would aim for a decision that is "fair to all parties (without favoritism and discrimination)". This is not possible here. The government's decision explicitly favored the common good of the public *over* the livelihoods of secondary stakeholders like private bus and rickshaw owners, whose businesses were decimated by the new, subsidized competitor.
+\end{itemize}
+
+\section{Identify and Evaluate the Courses of Action}
+
+This final step evaluates the possible decisions based on the ethical frameworks.
+
+\subsection{Action 1: Build the BRT Project (The Action Taken)}
+This action clearly prioritizes the \textbf{Common Good Approach}. The government acted as the agent for "society as whole," deciding that a modern mass transit system was a fundamental public right. It can also be seen as a \textbf{Teleological} and \textbf{Utilitarian} decision, where the *consequence* (a functional transit system for the "greatest number of people") was the desired result that justified the immense financial and social costs.
+
+\subsection{Action 2: Do Not Build the Project}
+This alternative course of action would have prioritized a different \textbf{Utilitarian} calculation. An opponent could argue that the "huge costs" were too high and that the same funds could have created a "greater benefit" if invested in other public services like hospitals, schools, or widespread road repairs. This action would also have been "fairer" to the existing private transport operators (a \textbf{Fairness Approach}), as it would not have destroyed their business model.
+
+\subsection{Action 3: Implement a Smaller-Scale Compromise}
+A third option could have been a \textbf{Relativist} approach, seeking a "consensus" or compromise. For example, the government could have invested in a new fleet of smaller, more efficient buses that used the existing road network. This would have been less costly and less disruptive, attempting to balance the public's need with the taxpayer's burden. However, this compromise would have failed to achieve the full "common good" goal of a high-speed, dedicated, and modern transit solution.
+
+\end{document}
+
